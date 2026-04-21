@@ -1703,6 +1703,46 @@ body {
     color: #4CAF50;
 }
 
+.movie-reactions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.movie-reaction-btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.movie-reaction-count {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+    color: #ffd9cc;
+}
+
+.movie-reaction-btn:hover {
+    border-color: rgba(255, 61, 0, 0.4);
+    background: rgba(255, 61, 0, 0.12);
+}
+
+.movie-reaction-btn.active {
+    border-color: rgba(255, 61, 0, 0.65);
+    background: rgba(255, 61, 0, 0.2);
+    box-shadow: 0 0 16px rgba(255, 61, 0, 0.2);
+}
+
 .movie-rating {
     color: var(--gold-color);
     font-weight: 600;

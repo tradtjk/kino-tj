@@ -175,6 +175,11 @@ let currentUser = null;
 let successAction = 'watch';
 let paymentStep = 'choose';
 let uploadedReceipt = null;
+let movieReactions = {};
+let movieReactionCounts = {};
+
+const MOVIE_REACTIONS_KEY = 'kinotj_movie_reactions';
+const MOVIE_REACTION_COUNTS_KEY = 'kinotj_movie_reaction_counts';
 
 async function syncUserAccessFromServer() {
     if (!currentUser || !currentUser.id) return;
@@ -215,6 +220,98 @@ function initMovies() {
         movies = [...defaultMovies];
         localStorage.setItem('kinotj_movies', JSON.stringify(movies));
     }
+}
+
+function initMovieReactions() {
+    const savedReactions = localStorage.getItem(MOVIE_REACTIONS_KEY);
+    if (!savedReactions) {
+        movieReactions = {};
+    } else {
+        try {
+            movieReactions = JSON.parse(savedReactions) || {};
+        } catch (error) {
+            movieReactions = {};
+        }
+    }
+
+    const savedReactionCounts = localStorage.getItem(MOVIE_REACTION_COUNTS_KEY);
+    try {
+        movieReactionCounts = savedReactionCounts ? JSON.parse(savedReactionCounts) : {};
+    } catch (error) {
+        movieReactionCounts = {};
+    }
+
+    // Если счётчики пустые, восстанавливаем их из текущих реакций.
+    if (!savedReactionCounts) {
+        Object.keys(movieReactions).forEach(movieId => {
+            const reaction = movieReactions[movieId];
+            movieReactionCounts[movieId] = {
+                likes: reaction === 'like' ? 1 : 0,
+                dislikes: reaction === 'dislike' ? 1 : 0
+            };
+        });
+        saveMovieReactionCounts();
+    }
+}
+
+function saveMovieReactions() {
+    localStorage.setItem(MOVIE_REACTIONS_KEY, JSON.stringify(movieReactions));
+}
+
+function saveMovieReactionCounts() {
+    localStorage.setItem(MOVIE_REACTION_COUNTS_KEY, JSON.stringify(movieReactionCounts));
+}
+
+function getMovieReaction(movieId) {
+    return movieReactions[String(movieId)] || null;
+}
+
+function getMovieReactionCounts(movieId) {
+    const movieKey = String(movieId);
+    const counts = movieReactionCounts[movieKey] || { likes: 0, dislikes: 0 };
+
+    return {
+        likes: Math.max(0, Number(counts.likes) || 0),
+        dislikes: Math.max(0, Number(counts.dislikes) || 0)
+    };
+}
+
+function setMovieReaction(movieId, reaction) {
+    if (reaction !== 'like' && reaction !== 'dislike') return;
+
+    const movieKey = String(movieId);
+    const currentReaction = getMovieReaction(movieId);
+    const counts = getMovieReactionCounts(movieId);
+    let nextReaction = reaction;
+
+    if (currentReaction === reaction) {
+        delete movieReactions[movieKey];
+        nextReaction = null;
+    } else {
+        movieReactions[movieKey] = reaction;
+    }
+
+    if (currentReaction === 'like') {
+        counts.likes = Math.max(0, counts.likes - 1);
+    } else if (currentReaction === 'dislike') {
+        counts.dislikes = Math.max(0, counts.dislikes - 1);
+    }
+
+    if (nextReaction === 'like') {
+        counts.likes += 1;
+    } else if (nextReaction === 'dislike') {
+        counts.dislikes += 1;
+    }
+
+    movieReactionCounts[movieKey] = counts;
+
+    saveMovieReactions();
+    saveMovieReactionCounts();
+
+    return {
+        reaction: getMovieReaction(movieId),
+        counts
+    };
 }
 
 // ========================================
@@ -583,6 +680,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function initApp() {
     // Инициализация фильмов из localStorage
     initMovies();
+    initMovieReactions();
     
     // Инициализация системы пользователей
     initUserSystem();
@@ -680,6 +778,8 @@ function createMovieCard(movie, index) {
     // Создаем заглушку на случай ошибки загрузки изображения
     const fallbackPoster = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='450'%3E%3Crect fill='%231a1a2e' width='300' height='450'/%3E%3Ctext x='50%25' y='45%25' text-anchor='middle' fill='%23ffffff' font-size='18' font-family='Arial'%3E${encodeURIComponent(movie.title)}%3C/text%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%23ff3d00' font-size='14' font-family='Arial'%3E${movie.year}%3C/text%3E%3C/svg%3E`;
     const paymentBadge = getMoviePaymentBadge(movie);
+    const movieReaction = getMovieReaction(movie.id);
+    const movieReactionCounts = getMovieReactionCounts(movie.id);
     
     card.innerHTML = `
         <div class="movie-poster-wrapper">
@@ -699,9 +799,40 @@ function createMovieCard(movie, index) {
                 <div class="movie-price">${movie.price} сомони</div>
                 <span class="movie-payment-badge movie-payment-badge--${paymentBadge.className}">${paymentBadge.text}</span>
             </div>
+            <div class="movie-reactions">
+                <button class="movie-reaction-btn ${movieReaction === 'like' ? 'active' : ''}" data-reaction="like" aria-label="Лайк">👍 <span class="movie-reaction-count" data-like-count>${movieReactionCounts.likes}</span></button>
+                <button class="movie-reaction-btn ${movieReaction === 'dislike' ? 'active' : ''}" data-reaction="dislike" aria-label="Дизлайк">👎 <span class="movie-reaction-count" data-dislike-count>${movieReactionCounts.dislikes}</span></button>
+            </div>
         </div>
     `;
     
+    const likeButton = card.querySelector('[data-reaction="like"]');
+    const dislikeButton = card.querySelector('[data-reaction="dislike"]');
+    const likeCountElement = card.querySelector('[data-like-count]');
+    const dislikeCountElement = card.querySelector('[data-dislike-count]');
+
+    const updateReactionButtons = () => {
+        const currentReaction = getMovieReaction(movie.id);
+        const counts = getMovieReactionCounts(movie.id);
+
+        likeButton.classList.toggle('active', currentReaction === 'like');
+        dislikeButton.classList.toggle('active', currentReaction === 'dislike');
+        likeCountElement.textContent = counts.likes;
+        dislikeCountElement.textContent = counts.dislikes;
+    };
+
+    likeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setMovieReaction(movie.id, 'like');
+        updateReactionButtons();
+    });
+
+    dislikeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setMovieReaction(movie.id, 'dislike');
+        updateReactionButtons();
+    });
+
     card.addEventListener('click', () => openMovieModal(movie));
     
     return card;
