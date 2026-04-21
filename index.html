@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kino Tj - лучший онлайн-кинотеатр. Смотрите фильмы и сериалы онлайн бесплатно">
+    <title>Kino Tj - Онлайн кинотеатр</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="#" onclick="handleNavigation('main'); return false;">
+                        <span class="logo-kino">KINO</span><span class="logo-tj">TJ</span>
+                    </a>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="header-search">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Фильмы, сериалы, персоны...">
+                        <button class="search-close" id="searchClose" aria-label="Очистить поиск">✕</button>
+                    </div>
+                    
+                    <!-- User Profile / Auth Button -->
+                    <div class="user-menu" id="userMenu">
+                        <button class="auth-btn" id="authBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span class="auth-btn-text">Войти</span>
+                        </button>
+                        
+                        <!-- User Dropdown (shown when logged in) -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="userAvatar">U</div>
+                                <div class="user-details">
+                                    <span class="user-name" id="userName">Пользователь</span>
+                                    <span class="user-phone" id="userPhone">+992 XXX XXX XXX</span>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item" id="myMoviesBtn">
+                                <span>🎬</span> Мои фильмы
+                            </button>
+                            <button class="dropdown-item" id="settingsBtn">
+                                <span>⚙️</span> Настройки
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" id="logoutBtn">
+                                <span>🚪</span> Выйти
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="burger-menu" id="burgerMenu" aria-label="Меню">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Panel -->
+    <div class="search-panel" id="searchPanel">
+        <div class="container">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-wrapper">
+        <aside class="sidebar" id="sidebar">
+            <button class="sidebar-close" id="sidebarClose">✕</button>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-category">
+                    <button class="sidebar-item active" data-category="main" onclick="handleSidebarNavigation('main', event)">
+                        <span class="sidebar-icon">🏠</span>
+                        <span class="sidebar-text">Главная</span>
+                    </button>
+                </div>
+                
+                <div class="sidebar-divider"></div>
+                
+                <h3 class="sidebar-section-title">Каталог</h3>
+                
+                <button class="sidebar-item" data-category="cinema" onclick="handleSidebarNavigation('cinema', event)">
+                    <span class="sidebar-icon">🎞️</span>
+                    <span class="sidebar-text">Онлайн-кинотеатр</span>
+                </button>
+                
+                <button class="sidebar-item" data-category="movies" onclick="handleSidebarNavigation('movies', event)">
+                    <span class="sidebar-icon">🎬</span>
+                    <span class="sidebar-text">Фильмы</span>
+                </button>
+                
+                <button class="sidebar-item" data-category="series" onclick="handleSidebarNavigation('series', event)">
+                    <span class="sidebar-icon">📺</span>
+                    <span class="sidebar-text">Сериалы</span>
+                </button>
+                
+                <button class="sidebar-item" data-category="channels" onclick="handleSidebarNavigation('channels', event)">
+                    <span class="sidebar-icon">📻</span>
+                    <span class="sidebar-text">Телеканалы</span>
+                </button>
+                
+                <div class="sidebar-divider"></div>
+                
+                <h3 class="sidebar-section-title">Развлечение</h3>
+                
+                <button class="sidebar-item" data-category="sports" onclick="handleSidebarNavigation('sports', event)">
+                    <span class="sidebar-icon">⚽</span>
+                    <span class="sidebar-text">Спорт</span>
+                </button>
+                
+                <button class="sidebar-item" data-category="tickets" onclick="handleSidebarNavigation('tickets', event)">
+                    <span class="sidebar-icon">🎫</span>
+                    <span class="sidebar-text">Билеты в кино</span>
+                </button>
+                
+                <button class="sidebar-item" data-category="media" onclick="handleSidebarNavigation('media', event)">
+                    <span class="sidebar-icon">📱</span>
+                    <span class="sidebar-text">Медиа</span>
+                </button>
+            </nav>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title" id="heroTitle">Загрузка...</h2>
+                <p class="hero-description" id="heroDescription">Загрузка...</p>
+                <div class="hero-info">
+                    <span class="hero-year" id="heroYear">2024</span>
+                    <span class="hero-genre" id="heroGenre">Жанр</span>
+                    <span class="hero-rating" id="heroRating">⭐ 0.0</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="heroWatchBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Смотреть
+                    </button>
+                    <button class="btn btn-secondary" id="heroInfoBtn">Подробнее</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Popular Movies -->
+            <section class="movies-section">
+                <h2 class="section-title">Популярные</h2>
+                <div class="movies-grid" id="popularMovies"></div>
+            </section>
+
+            <!-- New Movies -->
+            <section class="movies-section">
+                <h2 class="section-title">Новинки</h2>
+                <div class="movies-grid" id="newMovies"></div>
+            </section>
+
+            <!-- Recommended Movies -->
+            <section class="movies-section">
+                <h2 class="section-title">Рекомендуем</h2>
+                <div class="movies-grid" id="recommendedMovies"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-kino">KINO</span><span class="logo-tj">TJ</span>
+                </div>
+                <p class="footer-text">Лучший онлайн-кинотеатр в Таджикистане</p>
+                <div class="footer-links">
+                    <a href="#">О нас</a>
+                    <a href="#">Контакты</a>
+                    <a href="#">Правила</a>
+                </div>
+                <p class="footer-copy">&copy; 2026 Kino Tj. Все права защищены</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Window для просмотра фильма -->
+    <div class="modal" id="movieModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">✕</button>
+            
+            <div class="modal-body">
+                <div class="modal-poster">
+                    <img id="modalPoster" src="" alt="Movie Poster">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle">Название фильма</h2>
+                    <div class="modal-meta">
+                        <span id="modalYear">2024</span>
+                        <span id="modalGenre">Жанр</span>
+                        <span id="modalDuration">120 мин</span>
+                        <span id="modalRating">⭐ 0.0</span>
+                    </div>
+                    <p id="modalDescription">Описание фильма</p>
+                    <div class="modal-buttons">
+                        <button class="btn btn-primary" id="modalWatchBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Смотреть фильм
+                        </button>
+                        <button class="btn btn-secondary" id="modalTrailerBtn">Смотреть трейлер</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div class="player-modal" id="playerModal">
+        <div class="player-overlay" id="playerOverlay"></div>
+        <div class="player-container">
+            <button class="player-close" id="playerClose">✕</button>
+            <div class="video-wrapper">
+                <video id="videoPlayer" class="video-player">
+                    <source id="videoSource" src="" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+                <div class="video-controls" id="videoControls">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-filled" id="progressFilled"></div>
+                    </div>
+                    <div class="controls-bottom">
+                        <button class="control-btn" id="playPauseBtn">
+                            <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <svg class="pause-icon hidden" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="6" y="4" width="4" height="16"></rect>
+                                <rect x="14" y="4" width="4" height="16"></rect>
+                            </svg>
+                        </button>
+                        <div class="volume-control">
+                            <button class="control-btn" id="volumeBtn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                </svg>
+                            </button>
+                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                        </div>
+                        <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                        <button class="control-btn fullscreen-btn" id="fullscreenBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-overlay" id="paymentOverlay"></div>
+        <div class="payment-content">
+            <button class="payment-close" id="paymentClose">✕</button>
+            
+            <div class="payment-body">
+                <div class="payment-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                </div>
+                
+                <h2 class="payment-title">Оплата просмотра</h2>
+                <p class="payment-movie-name" id="paymentMovieName">Название фильма</p>
+                
+                <div class="payment-price-box">
+                    <span class="payment-price-label">Стоимость:</span>
+                    <span class="payment-price">1 <span class="currency">сомони</span></span>
+                </div>
+                
+                <div class="payment-features">
+                    <div class="payment-feature">
+                        <span class="feature-icon">✓</span>
+                        <span>HD качество</span>
+                    </div>
+                    <div class="payment-feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Без рекламы</span>
+                    </div>
+                    <div class="payment-feature">
+                        <span class="feature-icon">✓</span>
+                        <span>Доступ на 24 часа</span>
+                    </div>
+                </div>
+                
+                <div class="payment-methods">
+                    <p class="payment-methods-title">Выберите способ оплаты:</p>
+                    <div class="payment-methods-grid">
+                        <button class="payment-method active" data-method="card">
+                            <span class="method-icon">💳</span>
+                            <span class="method-name">Карта</span>
+                        </button>
+                        <button class="payment-method" data-method="mobile">
+                            <span class="method-icon">📱</span>
+                            <span class="method-name">Мобильный</span>
+                        </button>
+                        <button class="payment-method" data-method="wallet">
+                            <span class="method-icon">👛</span>
+                            <span class="method-name">Кошелёк</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="payment-details hidden" id="paymentDetails">
+                    <p class="payment-details-title">Реквизиты для оплаты:</p>
+                    <div class="payment-details-box">
+                        <div class="payment-detail-row"><span>Банк:</span> Душанбе сити</div>
+                        <div class="payment-detail-row"><span>Номер:</span> 200200200</div>
+                        <div class="payment-detail-row"><span>Имя:</span> Амин</div>
+                    </div>
+                    <div class="receipt-upload">
+                        <label for="receiptInput" class="receipt-label">Загрузите чек оплаты:</label>
+                        <input type="file" id="receiptInput" class="receipt-input" accept="image/*">
+                        <p class="receipt-help">Поддерживается изображение чека (JPG, PNG, WEBP)</p>
+                        <img id="receiptPreview" class="receipt-preview hidden" alt="Чек оплаты">
+                    </div>
+                    <p class="payment-details-note">После оплаты нажмите «Я оплатил». Доступ выдаётся после проверки.</p>
+                </div>
+                
+                <button class="btn btn-pay" id="payBtn">
+                    <span class="pay-icon">✅</span>
+                    Я оплатил
+                </button>
+                
+                <p class="payment-secure">
+                    <span class="secure-icon">🛡️</span>
+                    Безопасная оплата
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-overlay" id="successOverlay"></div>
+        <div class="success-content">
+            <div class="success-animation">
+                <div class="success-circle">
+                    <svg class="checkmark" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="success-title" id="successTitle">Оплата успешна!</h2>
+            <p class="success-text" id="successText">Приятного просмотра</p>
+            <button class="btn btn-primary" id="startWatchingBtn">Смотреть фильм</button>
+        </div>
+    </div>
+
+    <!-- Auth Modal (Login/Register) -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-overlay" id="authOverlay"></div>
+        <div class="auth-content">
+            <button class="auth-close" id="authClose">✕</button>
+            
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Вход</button>
+                <button class="auth-tab" data-tab="register">Регистрация</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="auth-form" id="loginForm">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-kino">KINO</span><span class="logo-tj">TJ</span>
+                    </div>
+                    <h2>Добро пожаловать!</h2>
+                    <p>Войдите в свой аккаунт</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPhone">Номер телефона</label>
+                    <div class="phone-input">
+                        <span class="phone-prefix">+992</span>
+                        <input type="tel" id="loginPhone" placeholder="XX XXX XXXX" maxlength="12">
+                    </div>
+                    <span class="input-error" id="loginPhoneError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="loginPassword" placeholder="Введите пароль">
+                        <button type="button" class="toggle-password" id="toggleLoginPassword">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="input-error" id="loginPasswordError"></span>
+                </div>
+                
+                <button class="btn btn-auth" id="loginBtn">
+                    <span>Войти</span>
+                </button>
+                
+                <p class="auth-switch">
+                    Нет аккаунта? <a href="#" id="switchToRegister">Зарегистрируйтесь</a>
+                </p>
+            </div>
+            
+            <!-- Register Form -->
+            <div class="auth-form hidden" id="registerForm">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-kino">KINO</span><span class="logo-tj">TJ</span>
+                    </div>
+                    <h2>Создать аккаунт</h2>
+                    <p>Заполните данные для регистрации</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerName">Ваше имя</label>
+                    <input type="text" id="registerName" placeholder="Введите имя">
+                    <span class="input-error" id="registerNameError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPhone">Номер телефона</label>
+                    <div class="phone-input">
+                        <span class="phone-prefix">+992</span>
+                        <input type="tel" id="registerPhone" placeholder="XX XXX XXXX" maxlength="12">
+                    </div>
+                    <span class="input-error" id="registerPhoneError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPassword" placeholder="Минимум 6 символов">
+                        <button type="button" class="toggle-password" id="toggleRegisterPassword">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="input-error" id="registerPasswordError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPasswordConfirm">Подтвердите пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="registerPasswordConfirm" placeholder="Повторите пароль">
+                        <button type="button" class="toggle-password" id="toggleRegisterPasswordConfirm">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="input-error" id="registerPasswordConfirmError"></span>
+                </div>
+                
+                <button class="btn btn-auth" id="registerBtn">
+                    <span>Зарегистрироваться</span>
+                </button>
+                
+                <p class="auth-switch">
+                    Уже есть аккаунт? <a href="#" id="switchToLogin">Войдите</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Movies Modal -->
+    <div class="my-movies-modal" id="myMoviesModal">
+        <div class="my-movies-overlay" id="myMoviesOverlay"></div>
+        <div class="my-movies-content">
+            <button class="modal-close" id="myMoviesClose">✕</button>
+            <h2 class="my-movies-title">🎬 Мои фильмы</h2>
+            <p class="my-movies-subtitle">Фильмы, которые вы приобрели</p>
+            <div class="my-movies-grid" id="myMoviesGrid">
+                <!-- Movies will be loaded here -->
+            </div>
+            <div class="my-movies-empty" id="myMoviesEmpty">
+                <span class="empty-icon">🎥</span>
+                <p>У вас пока нет купленных фильмов</p>
+                <button class="btn btn-primary" onclick="closeMyMoviesModal(); handleNavigation('movies');">Выбрать фильм</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-overlay" id="settingsOverlay"></div>
+        <div class="settings-content">
+            <button class="modal-close" id="settingsClose">✕</button>
+            
+            <h2 class="settings-title">⚙️ Настройки профиля</h2>
+            
+            <div class="settings-body">
+                <!-- Avatar Section -->
+                <div class="avatar-section">
+                    <div class="avatar-wrapper">
+                        <img id="settingsAvatar" class="settings-avatar" alt="Avatar" src="">
+                        <div class="avatar-overlay">
+                            <button class="avatar-upload-btn" id="avatarUploadBtn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarInput" class="hidden" accept="image/*">
+                </div>
+
+                <!-- Form Fields -->
+                <form id="settingsForm" class="settings-form">
+                    <div class="form-group">
+                        <label for="settingsName">Имя пользователя</label>
+                        <input type="text" id="settingsName" placeholder="Введите ваше имя" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingsPhone">Номер телефона</label>
+                        <div class="phone-input">
+                            <span class="phone-prefix">+992</span>
+                            <input type="tel" id="settingsPhone" placeholder="XX XXX XXXX" maxlength="12" required>
+                        </div>
+                    </div>
+
+                    <div class="settings-buttons">
+                        <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                        <button type="button" class="btn btn-secondary" id="settingsCancelBtn">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/db-sync.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

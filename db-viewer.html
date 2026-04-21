@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр БД | Kino Tj</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
+        .main-content.db-viewer {
+            margin-left: 0;
+        }
+
+        .content-section {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .json-block {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 18px;
+            white-space: pre-wrap;
+            overflow: auto;
+            max-height: 65vh;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .db-meta {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <main class="main-content db-viewer">
+        <header class="admin-header">
+            <h1 class="page-title">Интерфейс БД (SQLite)</h1>
+            <div class="header-actions">
+                <a class="btn btn-secondary" href="admin.html">В админку</a>
+                <button class="btn btn-primary" id="refreshBtn">Обновить</button>
+            </div>
+        </header>
+
+        <section class="content-section active">
+            <div class="section-header">
+                <h2>Данные базы</h2>
+                <div class="db-meta" id="dbMeta">Загрузка...</div>
+            </div>
+
+            <div class="tabs">
+                <button class="btn btn-primary" data-tab="movies">Фильмы</button>
+                <button class="btn btn-secondary" data-tab="users">Пользователи</button>
+                <button class="btn btn-secondary" data-tab="payments">Платежи</button>
+                <button class="btn btn-secondary" data-tab="json">RAW JSON</button>
+            </div>
+
+            <div class="table-container" id="tableContainer">
+                <table class="data-table">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="json-block hidden" id="jsonBlock"></div>
+        </section>
+    </main>
+
+    <script src="js/db-viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Kino Tj</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="admin-login" id="adminLogin">
+        <div class="login-container">
+            <div class="login-logo">
+                <span class="logo-kino">KINO</span>
+                <span class="logo-tj">TJ</span>
+                <span class="logo-admin">ADMIN</span>
+            </div>
+            <h2>Вход в админ-панель</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">Номер телефона</label>
+                    <input type="text" id="adminUsername" placeholder="+992 XX XXX XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="adminPassword" placeholder="Введите пароль" required>
+                        <button type="button" class="toggle-password" id="toggleAdminPassword">👁</button>
+                    </div>
+                </div>
+                <p class="error-message" id="loginError"></p>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
+            <p class="login-hint">Телефон: +992 500 500 200 | Пароль: 123456</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel hidden" id="adminPanel">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-kino">KINO</span>
+                <span class="logo-tj">TJ</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Дашборд</span>
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Пользователи</span>
+                </a>
+                <a href="#" class="nav-item" data-section="movies">
+                    <span class="nav-icon">🎬</span>
+                                <th>Действие</th>
+                    <span class="nav-text">Фильмы</span>
+                </a>
+                <a href="#" class="nav-item" data-section="payments">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">Платежи</span>
+                </a>
+                <a href="db-viewer.html" class="nav-item">
+                    <span class="nav-icon">🗄️</span>
+                    <span class="nav-text">Интерфейс БД</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">На сайт</span>
+                </a>
+                <button class="logout-btn" id="adminLogout">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-text">Выйти</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <button class="burger-btn" id="burgerBtn">☰</button>
+                <h1 class="page-title" id="pageTitle">Дашборд</h1>
+                <div class="admin-user">
+                    <span class="admin-name">Администратор</span>
+                    <div class="admin-avatar">👤</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section class="content-section active" id="dashboardSection">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon users-icon">👥</div>
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Пользователей</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon movies-icon">🎬</div>
+                        <div class="stat-info">
+                            <h3 id="totalMovies">0</h3>
+                            <p>Фильмов</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon payments-icon">💰</div>
+                        <div class="stat-info">
+                            <h3 id="totalPayments">0</h3>
+                            <p>Покупок</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon revenue-icon">📈</div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">0 сомони</h3>
+                            <p>Доход</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Последние регистрации</h3>
+                        <div class="recent-list" id="recentUsers"></div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Популярные фильмы</h3>
+                        <div class="recent-list" id="popularMovies"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section class="content-section" id="usersSection">
+                <div class="section-header">
+                    <h2>Управление пользователями</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <input type="text" id="userSearch" placeholder="Поиск по имени или телефону...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <button class="btn btn-primary" id="addUserBtn">
+                            <span>+</span> Добавить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя</th>
+                                <th>Телефон</th>
+                                <th>Дата регистрации</th>
+                                <th>Покупки</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="empty-message hidden" id="noUsersMessage">Пользователей пока нет</p>
+            </section>
+
+            <!-- Movies Section -->
+            <section class="content-section" id="moviesSection">
+                <div class="section-header">
+                    <h2>Управление фильмами</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <input type="text" id="movieSearch" placeholder="Поиск по названию...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <button class="btn btn-primary" id="addMovieBtn">
+                            <span>+</span> Добавить фильм
+                        </button>
+                    </div>
+                </div>
+
+                <div class="movies-admin-grid" id="moviesAdminGrid">
+                    <!-- Movies will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Payments Section -->
+            <section class="content-section" id="paymentsSection">
+                <div class="section-header">
+                    <h2>История платежей</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <input type="text" id="paymentSearch" placeholder="Поиск...">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table" id="paymentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Пользователь</th>
+                                <th>Фильм</th>
+                                <th>Сумма</th>
+                                <th>Дата</th>
+                                <th>Чек</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <!-- Payments will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="empty-message hidden" id="noPaymentsMessage">Платежей пока нет</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-overlay" id="editUserOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="editUserClose">×</button>
+            <h2 class="modal-title" id="editUserTitle">Редактировать пользователя</h2>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label for="editUserName">Имя</label>
+                    <input type="text" id="editUserName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUserPhone">Телефон</label>
+                    <input type="text" id="editUserPhone" placeholder="+992 XX XXX XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUserPassword">Новый пароль (оставьте пустым, чтобы не менять)</label>
+                    <input type="password" id="editUserPassword" placeholder="Новый пароль">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelEditUser">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-overlay" id="deleteConfirmOverlay"></div>
+        <div class="modal-content modal-small">
+            <h2 class="modal-title">Подтвердите удаление</h2>
+            <p class="confirm-text" id="deleteConfirmText">Вы уверены, что хотите удалить этого пользователя?</p>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancelDelete">Отмена</button>
+                <button class="btn btn-danger" id="confirmDelete">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-overlay" id="addUserOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="addUserClose">×</button>
+            <h2 class="modal-title">Добавить пользователя</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="newUserName">Имя</label>
+                    <input type="text" id="newUserName" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUserPhone">Телефон</label>
+                    <input type="text" id="newUserPhone" placeholder="+992 XX XXX XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUserPassword">Пароль</label>
+                    <input type="password" id="newUserPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddUser">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Movies Modal -->
+    <div class="modal" id="userMoviesModal">
+        <div class="modal-overlay" id="userMoviesOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="userMoviesClose">×</button>
+            <h2 class="modal-title" id="userMoviesTitle">Купленные фильмы</h2>
+            <div class="user-movies-list" id="userMoviesList"></div>
+        </div>
+    </div>
+
+    <!-- Edit Movie Modal -->
+    <div class="modal" id="editMovieModal">
+        <div class="modal-overlay" id="editMovieOverlay"></div>
+        <div class="modal-content modal-large">
+            <button class="modal-close" id="editMovieClose">×</button>
+            <h2 class="modal-title" id="editMovieTitle">Редактировать фильм</h2>
+            <form id="editMovieForm">
+                <input type="hidden" id="editMovieId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editMovieName">Название</label>
+                        <input type="text" id="editMovieName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMovieYear">Год</label>
+                        <input type="number" id="editMovieYear" min="1900" max="2030" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editMovieGenre">Жанр</label>
+                        <input type="text" id="editMovieGenre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMovieRating">Рейтинг</label>
+                        <input type="number" id="editMovieRating" min="0" max="10" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editMovieDuration">Длительность (мин)</label>
+                        <input type="number" id="editMovieDuration" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editMoviePrice">Цена (сомони)</label>
+                        <input type="number" id="editMoviePrice" min="0" step="0.5" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editMovieDescription">Описание</label>
+                    <textarea id="editMovieDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editMoviePoster">URL постера</label>
+                    <input type="url" id="editMoviePoster" placeholder="https://...">
+                    <small class="form-hint">Ссылка на изображение постера</small>
+                </div>
+                <div class="form-group">
+                    <label for="editMovieVideo">Ссылка на видео (YouTube или файл)</label>
+                    <input type="text" id="editMovieVideo" placeholder="https://youtube.com/watch?v=... или путь к файлу">
+                    <small class="form-hint">Поддерживается: YouTube, локальные файлы MP4</small>
+                </div>
+                <div class="form-group">
+                    <label>Категории</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editCategoryPopular" value="popular">
+                            <span>Популярные</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editCategoryNew" value="new">
+                            <span>Новинки</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editCategoryRecommended" value="recommended">
+                            <span>Рекомендуем</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelEditMovie">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Movie Modal -->
+    <div class="modal" id="addMovieModal">
+        <div class="modal-overlay" id="addMovieOverlay"></div>
+        <div class="modal-content modal-large">
+            <button class="modal-close" id="addMovieClose">×</button>
+            <h2 class="modal-title">Добавить фильм</h2>
+            <form id="addMovieForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newMovieName">Название</label>
+                        <input type="text" id="newMovieName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMovieYear">Год</label>
+                        <input type="number" id="newMovieYear" min="1900" max="2030" value="2024" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newMovieGenre">Жанр</label>
+                        <input type="text" id="newMovieGenre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMovieRating">Рейтинг</label>
+                        <input type="number" id="newMovieRating" min="0" max="10" step="0.1" value="7.0" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newMovieDuration">Длительность (мин)</label>
+                        <input type="number" id="newMovieDuration" min="1" value="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newMoviePrice">Цена (сомони)</label>
+                        <input type="number" id="newMoviePrice" min="0" step="0.5" value="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newMovieDescription">Описание</label>
+                    <textarea id="newMovieDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="newMoviePoster">URL постера</label>
+                    <input type="url" id="newMoviePoster" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="newMovieVideo">Ссылка на видео (YouTube или файл)</label>
+                    <input type="text" id="newMovieVideo" placeholder="https://youtube.com/watch?v=...">
+                    <small class="form-hint">Поддерживается: YouTube, локальные файлы MP4</small>
+                </div>
+                <div class="form-group">
+                    <label>Категории</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newCategoryPopular" value="popular">
+                            <span>Популярные</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newCategoryNew" value="new" checked>
+                            <span>Новинки</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newCategoryRecommended" value="recommended">
+                            <span>Рекомендуем</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddMovie">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span class="notification-icon" id="notificationIcon">✓</span>
+        <span class="notification-message" id="notificationMessage"></span>
+    </div>
+
+    <script src="js/db-sync.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

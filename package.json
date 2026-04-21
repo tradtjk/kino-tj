@@ -1,0 +1,18 @@
+{
+  "name": "kino-tj",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Kino Tj with SQLite-backed storage sync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
